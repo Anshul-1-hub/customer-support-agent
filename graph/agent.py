@@ -21,7 +21,9 @@ class AgentState(TypedDict):
     requires_escalation: bool
 
 def check_clarity(state: AgentState) -> AgentState:
-    prompt = f"""Is this support ticket clear enough to give response on?
+    prompt = f"""You are a support ticket classifier for a streamlit product.
+    Is this support ticket specific enough to attempt an answer?
+    A ticket is clear if it describes a concrete issue or question, even if unrelated to Streamlit.
     Ticket: {state["ticket"]}
     Reply with a YES or NO only.
     """
