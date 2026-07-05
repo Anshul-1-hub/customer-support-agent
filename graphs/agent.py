@@ -9,7 +9,7 @@ from langgraph.graph import StateGraph, START, END
 load_dotenv()
 
 llm = ChatGroq(
-    model="llama-3.1-70b-versatile",
+    model="llama-3.3-70b-versatile",
     groq_api_key=os.getenv("GROQ_API_KEY")
 )
 
@@ -27,7 +27,7 @@ def check_clarity(state: AgentState) -> AgentState:
     """
     result = llm.invoke(prompt)
 
-    if result.content.strip().upper == "YES":
+    if result.content.strip().upper() == "YES":
         state["is_clear"] = True
 
     else:
