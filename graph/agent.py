@@ -3,7 +3,7 @@ from langchain_core.documents import Document
 from langchain_groq import ChatGroq
 import os
 from dotenv import load_dotenv
-from chains.retriever import get_retriever
+from chain.retriever import get_retriever
 from langgraph.graph import StateGraph, START, END
 
 load_dotenv()
