@@ -4,6 +4,7 @@ from langchain_groq import ChatGroq
 import os
 from dotenv import load_dotenv
 from chains.retriever import get_retriever
+from langgraph.graph import StateGraph, START, END
 
 load_dotenv()
 
@@ -65,3 +66,31 @@ def retrieve_and_resolve(state: AgentState) -> AgentState:
         state["requires_escalation"] = False
 
     return state
+
+# these two are routing functions required for conditional edges, i read docs
+def route_check_clarity(state: AgentState) -> str:
+    if(state["is_clear"] == False):
+        return "clarify"
+    else:
+        return "retrieve_and_resolve"
+    
+def route_check_escalation(state: AgentState) -> str:
+    if(state["requires_escalation"] == False):
+        return END
+    else:
+        return "escalate"
+
+graph = StateGraph(AgentState)
+
+graph.add_node("check_clarity", check_clarity)
+graph.add_node("clarify", clarify)
+graph.add_node("retrieve_and_resolve", retrieve_and_resolve)
+graph.add_node("escalate", escalate)
+
+graph.add_edge(START, "check_clarity")
+graph.add_conditional_edges("check_clarity", route_check_clarity)
+graph.add_edge("clarify", END)
+graph.add_conditional_edges("retrieve_and_resolve", route_check_escalation)
+graph.add_edge("escalate", END)
+
+app = graph.compile()
